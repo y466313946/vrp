@@ -1,0 +1,3 @@
+instance,size,iterations,best_iteration,alns_feasible,alns_vehicles,alns_distance,reference_available,reference_feasible,reference_vehicles,reference_distance,vehicle_gap,distance_gap,distance_gap_pct
+lc101,100,3,0,True,10,828.94,True,True,10,828.94,0,-0.0,-0.0
+lc102,100,5,4,True,11,861.96,True,True,10,828.94,1,33.03,3.98
