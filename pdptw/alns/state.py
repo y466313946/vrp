@@ -97,3 +97,4 @@ class ALNSResult:
     best_solution: SolutionState
     best_iteration: int
     iterations: int
+    runtime_seconds: float

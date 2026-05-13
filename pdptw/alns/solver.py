@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import random
+from time import perf_counter
 
 from pdptw.models import PDPTWInstance
 from pdptw.alns.acceptance import accept_solution
@@ -42,6 +43,7 @@ class PDPTWALNS:
     def solve(self, instance: PDPTWInstance) -> ALNSResult:
         """运行主搜索循环。"""
 
+        start_time = perf_counter()
         prepared = prepare_instance(instance)
         current = build_initial_solution(prepared)
         best = current.copy()
@@ -90,12 +92,18 @@ class PDPTWALNS:
 
             temperature = max(self.config.min_temperature, temperature * self.config.cooling_rate)
             if no_improve_counter >= self.config.no_improve_limit:
-                return ALNSResult(best_solution=best, best_iteration=best_iteration, iterations=iteration)
+                return ALNSResult(
+                    best_solution=best,
+                    best_iteration=best_iteration,
+                    iterations=iteration,
+                    runtime_seconds=perf_counter() - start_time,
+                )
 
         return ALNSResult(
             best_solution=best,
             best_iteration=best_iteration,
             iterations=self.config.max_iterations,
+            runtime_seconds=perf_counter() - start_time,
         )
 
     def _initial_temperature(self, solution: SolutionState) -> float:
