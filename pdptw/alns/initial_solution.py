@@ -13,10 +13,18 @@ def build_initial_solution(prepared: PreparedInstance) -> SolutionState:
     如果现有路径无法容纳该请求，就新开一条路径。
     """
 
+    snapshots = build_initial_solution_snapshots(prepared)
+    return snapshots[-1]
+
+
+def build_initial_solution_snapshots(prepared: PreparedInstance) -> list[SolutionState]:
+    """记录初始解从空解到完整初始解的逐步构造过程。"""
+
     solution = SolutionState(
         routes=[],
         unserved_requests=set(prepared.requests),
     )
+    snapshots = [solution.copy()]
 
     request_order = sorted(
         prepared.requests.values(),
@@ -34,12 +42,15 @@ def build_initial_solution(prepared: PreparedInstance) -> SolutionState:
                 raise ValueError(f"Cannot build feasible initial route for request {request.request_id}")
             solution.routes.append(route)
             solution.unserved_requests.discard(request.request_id)
+            _refresh_solution_metrics(prepared, solution)
+            snapshots.append(solution.copy())
             continue
 
         apply_insertion_move(prepared, solution, move)
+        _refresh_solution_metrics(prepared, solution)
+        snapshots.append(solution.copy())
 
-    _refresh_solution_metrics(prepared, solution)
-    return solution
+    return snapshots
 
 
 def _refresh_solution_metrics(prepared: PreparedInstance, solution: SolutionState) -> None:
